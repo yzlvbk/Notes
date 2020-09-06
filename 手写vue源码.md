@@ -4,7 +4,7 @@
 
 ------
 
-![vueMVVM](/Users/a/Desktop/vueMVVM.png)
+![vueMVVM](./image/vueMVVM.png)
 
 MVVM框架的三要素：**数据响应式、模板引擎及渲染**
 
@@ -113,7 +113,7 @@ function set(obj, key, val) {
 4. 由于data的某个key在一个视图中可能出现多次，所以每个key都需要一个管家Dep来管理多个Watcher
 5. 将来data中数据一旦发生变化，会首先找到对应的Dep，通知所有Watcher执行更新函数
 
-![vue流程图](/Users/a/Desktop/vue流程图.png)
+![vue流程图](./image/vue流程图.png)
 
 
 
