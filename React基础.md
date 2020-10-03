@@ -271,3 +271,61 @@ export default function ReactReduxHook() {
 }
 ```
 
+##### 7.react-router
+
+react-router中奉⾏⼀切皆组件的思想，路由器-**Router**、链接-**Link**、路由-**Route**、独占-**Switch**、重定向-**Redirect**都以组件形式存在
+
+**Route**渲染内容的三种方式 Route渲染优先级:children>component>render。
+
+```
+这三种⽅方式互斥，你只能⽤用⼀一种。
+```
+
+**children**:**func** 有时候，不管location是否匹配，你都需要渲染⼀些内容，这时候你可以⽤用children。 除了不管location是否匹配都会被渲染之外，其它工作⽅方法与render完全⼀一样。
+
+**render**:**func** 但是当你用render的时候，你调用的只是个函数。 只在当location匹配的时候渲染。
+
+**component: component**
+
+只在当location匹配的时候渲染。
+
+```react
+{/* 添加Switch表示仅匹配⼀一个*/} 
+<Switch>
+{/* 根路路由要添加exact，实现精确匹配 */} 
+  <Route
+    exact
+    path="/"
+    component={HomePage}
+  />
+  <Route path="/user" component={UserPage} />
+  <Route component={EmptyPage} />
+</Switch>
+```
+
+##### 8.纯组件PureComponent
+
+React.PureComponent 与 React.Component 很相似。两者的区别在于 React.Component 并未实 现 shouldComponentUpdate() ，⽽而 React.PureComponent 中以浅层对⽐比 prop 和 state 的⽅方式来 实现了了该函数。
+
+如果赋予 React 组件相同的 props 和 state， render() 函数会渲染相同的内容，那么在某些情况下使用 React.PureComponent 可提高性能。
+
+##### 9.react生命周期
+
+挂载时：
+
+1. constructor
+2. static getDerivedStateFormProps(props, state) 返回null 或对象，返回对象则用于更新state
+3. render
+4. componentDidMount
+
+更新时：
+
+1. static getDerivedStateFormProps(props, state) 
+2. shouldComponentUpdate 返回true或false
+3. render
+4. getSnapshotBeforeUpdate 任何返回值将作为componentDidUpdate第三个参数
+5. componentDidUpdate(prevProps,prevState,snapshot)
+
+卸载时：
+
+1. componentWillUnmount
