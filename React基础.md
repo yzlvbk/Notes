@@ -35,7 +35,7 @@ export default function ReactComponentFunction() {
 
 setState(partialState, callback)
 
-1. partialState:object|function ⽤用于产⽣生与当前state合并的⼦子集。
+1. partialState:object|function ⽤于产生与当前state合并的子集。
 2. callback:function state更更新之后被调⽤用
 
 ###### 关于setState()应该了解的三件事：
