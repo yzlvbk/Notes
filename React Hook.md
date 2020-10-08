@@ -84,6 +84,66 @@ class Child extends PureComponent {
 }
 ```
 
+##### 5.useContext
+
+接收一个 context 对象（`React.createContext` 的返回值）并返回该 context 的当前值。当前的 context 值由上层组件中距离当前组件最近的 `value` prop 决定。
+
+```jsx
+import React, { useContext } from 'react'
+import { ThemeContext } from './Context'
+
+export default function UseContext() {
+  const context = useContext(ThemeContext)
+  return (
+    <div>
+      <h3 className={context.themeColor}>UseContext</h3>
+    </div>
+  )
+}
+```
+
+##### 6.useReducer
+
+useState 的替代方案。它接收一个形如 (state, action) => newState 的 reducer，并返回当前的 state 以及与其配套的 dispatch ⽅方法。(如果你熟悉 Redux 的话，就已经知道它如何⼯作了。)
+
+```jsx
+ 
+import React, {useReducer, useLayoutEffect, useEffect} from "react";
+import {counterReducer} from "../store";
+const init = initArg => {
+  return initArg - 0;
+};
+export default function HooksPage(props) {
+  const [state, dispatch] = useReducer(counterReducer, "0", init);
+  useEffect(() => {
+    console.log("useEffect"); 
+});
+  useLayoutEffect(() => {
+    console.log("useLayoutEffect"); 
+});
+  return (
+    <div>
+      <h3>HooksPage</h3>
+      <p>{state}</p>
+      <button onClick={() => dispatch({type: "ADD"})}>add</button>
+</div>
+); }
+```
+
+##### 7.useRef
+
+`useRef` 返回一个可变的 ref 对象，其 `.current` 属性被初始化为传入的参数（`initialValue`）。返回的 ref 对象在组件的整个生命周期内保持不变。
+
+1. 绑定子组件DOM
+2. `useRef` 会在每次渲染时返回同一个 ref 对象。当 ref 对象内容发生变化时，`useRef` 并*不会*通知你。变更 `.current` 属性不会引发组件重新渲染。
+3. 父组件调用子组件方法（配合`useImperativeHandle`使用）
+
+##### 8.useLayoutEffect
+
+其函数签名与 useEffect 相同，但它会在所有的 DOM 变更之后同步调用 effect。可以使⽤用它来读取 DOM 布局并同步触发重渲染。在浏览器器执⾏绘制之前， useLayoutEffect 内部的更新计划将被同步刷新。
+
+尽可能使用标准的 useEffect 以避免阻塞视觉更新。
+
 
 
 ##### 自定义Hook
