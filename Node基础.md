@@ -123,10 +123,319 @@ path.format({
 
 所有的文件系统操作都具有同步的、回调的、以及基于 promise 的形式
 
-###### 3.1fs.existsSync(pathName) —— 文件是否存在
+###### 3.1readDir(读取目录)
 
-###### 3.2fs.readdirSync(sourcePath) —— 读取路径下文件
+```js
+const fs = require('fs')
+const path = require('path')
 
-###### 3.3fs.statSync(pathName).isFile() —— 判断是否为文件
+// 读取目录并判断是否为文件
+fs.readdir(path.resolve(__dirname, '../'), (err, files) => {
+  files.forEach(file => {
+    const isFile = fs.stat(path.resolve(__dirname, '../'), (err, stats) => {
+      const isfile = stats.isFile()
+      console.log('isfile:', isfile)
+    })
+  })
+})
+```
 
-###### 3.4fs.writeFileSync(fileName, content) —— 写入内容
+###### 3.2readFile(读取文件)
+
+```js
+const fs = require('fs')
+
+// 读取文件（同步方式）
+// * 1.第一步打开文件（文件描述符方式）
+const fd = fs.openSync(__dirname + '/hello.txt', 'r') // 返回的为文件在内存中的标识
+// * 2.读取文件
+const buf = Buffer.alloc(20)
+const conent = fs.readFileSync(fd, 'utf-8') // 文件描述符
+
+// 直接文件地址打开
+const conent = fs.readFileSync(__dirname + '/hello.txt', 'utf-8') // 直接文件名
+
+// 异步方式
+fs.readFile(__dirname + '/hello.txt', 'utf-8', (err, data) => {
+  console.log(data)
+})
+```
+
+###### 3.3writeFile(写入文件)
+
+```js
+const fs = require('fs')
+
+// * 方法一：写入内容为字符串
+// fs.writeFile(__dirname + '/test.txt', '晚上吃啥?', 'utf-8', (err) => {
+
+//   if (err) {
+//     console.log(err);
+//   }
+//   console.log('文件被写入')
+// })
+
+// * 方法二：写入内容为文件描述符 如果data是 buffer，则encoding选项会被忽略。
+// const data = new Uint8Array(Buffer.from('Node.js 中文网'))
+// fs.writeFile(__dirname + '/test.txt', data, (err) => {
+
+//   if (err) {
+//     console.log(err);
+//   }
+//   console.log('文件被写入')s
+// })
+
+
+// * 文件追加
+// fs.writeFile(__dirname + '/test.txt', '青椒肉丝\n', { encoding: 'utf-8', flag: 'a' }, (err) => {
+//   if (err) {
+//     console.log(err);
+//   }
+//   console.log('文件被写入')
+// })
+
+function writeFs(path, content) {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(path, content, { encoding: 'utf-8', flag: 'a' }, (err) => {
+      if (err) {
+        reject(err)
+      } else {
+        console.log('文件被写入')
+        resolve()
+      }
+    })
+  })
+}
+
+async function startWrite() {
+  await writeFs(__dirname + '/test2.txt', 'js\n')
+  await writeFs(__dirname + '/test2.txt', 'cssdddddd\n')
+  await writeFs(__dirname + '/test2.txt', 'java\n')
+  await writeFs(__dirname + '/test2.txt', 'js2\n')
+  await writeFs(__dirname + '/test2.txt', 'js3\n')
+  await writeFs(__dirname + '/test2.txt', 'js4\n')
+}
+// 执行写入文件
+// startWrite()
+
+
+// !删除文件
+// fs.unlink(__dirname + '/test.txt', (err) => {
+//   if (err) console.log(err)
+//   console.log('文件删除成功')
+// })
+
+```
+
+
+
+##### 4.url
+
+###### 4.1new URL(input[, base])
+
+```js
+const url = require('url')
+const myURL = new URL('https://user:pass@sub.host.com:8080/p/a/t/h?query=string#hash')
+console.log(myURL)
+输出：
+/*
+URL {
+  href: 'https://user:pass@sub.host.com:8080/p/a/t/h?		  query=string#hash',
+  origin: 'https://sub.host.com:8080',
+  protocol: 'https:',
+  username: 'user',
+  password: 'pass',
+  host: 'sub.host.com:8080',
+  hostname: 'sub.host.com',
+  port: '8080',
+  pathname: '/p/a/t/h',
+  search: '?query=string',
+  searchParams: URLSearchParams { 'query' => 'string' },
+  hash: '#hash'
+}
+*/
+```
+
+##### 5.querystring ——查询字符串
+
+###### 5.1`querystring.stringify(obj[, sep[, eq[, options]]])` —— 将对象解析成字符串
+
+```js
+const querystring = require('querystring')
+const ret1 = querystring.stringify({ foo: 'bar', baz: ['qux', 'quux'], corge: '2' })
+输出：'foo=bar&baz=qux&baz=quux&corge=2'
+
+querystring.stringify(obj[, sep[, eq[, options]]])
+// sep <string> 用于在查询字符串中分隔键值对的子字符串。默认值: '&'
+// eq <string> 用于在查询字符串中分隔键和值的子字符串。默认值: '='
+
+```
+
+###### 5.2`querystring.parse(str[, sep[, eq[, options]]])` —— 将字符串解析成对象
+
+##### 6.readline(逐行读取)
+
+```js
+const readline = require('readline')
+const fs = require('fs')
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+
+function lcQuestion(title) {
+  return new Promise((resolve, reject) => {
+    rl.question(title, (answer) => {
+      resolve(answer)
+    })
+  })
+}
+
+async function createPackge() {
+  const name = await lcQuestion('您的包名叫什么？')
+  const description = await lcQuestion('您的包如何描述？')
+  const main = await lcQuestion('您的包主程序入口文件是什么？')
+  const author = await lcQuestion('您的包的作者是谁？')
+
+  const content = `
+  {
+  "name": "${name}",
+  "version": "1.0.0",
+  "description": "${description}",
+  "main": "${main}",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "${author}",
+  "license": "ISC"
+}
+`
+  fs.writeFile(__dirname + '/package.json', content, 'utf-8', (err) => {
+    console.log('写入成功')
+    // 最终写完内容，关闭输入进程
+    rl.close()
+  })
+}
+
+rl.on('close', function () {
+  // 停止程序
+  process.exit(0)
+})
+
+createPackge()
+```
+
+##### 7.stream(文件流)
+
+###### 7.1createWriteStream
+
+```js
+const fs = require('fs')
+
+// ! 1.创建写入流
+const ws = fs.createWriteStream(__dirname + '/hello.txt')
+// * 监听文件打开事件
+ws.on('open', () => {
+  console.log('文件写入打开状态')
+})
+
+// * 监听文件准备事件
+ws.on('ready', () => {
+  console.log('文件写入已准备状态')
+})
+
+ws.write('hellow world1', (err) => {
+  if (err) {
+    console.log(err)
+  } else {
+    console.log('内容写入完成')
+  }
+})
+
+ws.write('hellow world2', (err) => {
+  if (err) {
+    console.log(err)
+  } else {
+    console.log('内容写入完成')
+  }
+})
+
+ws.write('hellow world3', (err) => {
+  if (err) {
+    console.log(err)
+  } else {
+    console.log('内容写入完成')
+  }
+})
+
+ws.end(() => {
+  console.log('end：文件写入完成')
+})
+
+// * 监听文件关闭事件
+ws.on('close', () => {
+  console.log('文件写入已关闭状态')
+})
+```
+
+###### 7.1createReadStream
+
+```js
+const fs = require('fs')
+
+// ! 创建读取文件流
+const rs = fs.createReadStream(__dirname + '/宠物.mp4')
+// ! 创建写入文件流
+const ws = fs.createWriteStream(__dirname + '/宠物copy.mp4')
+
+rs.on('open', () => {
+  console.log('读取的文件打开')
+})
+
+// * 每一次数据流入完成
+rs.on('data', (chunk) => {
+  console.log('单皮数据流入:', chunk)
+  // 写入文件
+  ws.write(chunk)
+})
+
+rs.on('close', () => {
+  console.log('读取流结束')
+  // 写入也完成
+  ws.end()
+})
+
+```
+
+###### 7.2pipe(管道流)
+
+```js
+// 管道流
+const fs = require('fs')
+
+// ! 创建读取文件流
+const rs = fs.createReadStream(__dirname + '/宠物.mp4')
+// ! 创建写入文件流
+const ws = fs.createWriteStream(__dirname + '/宠物copy2.mp4')
+
+// !读取文件内容并将内容写入新的文件中
+rs.pipe(ws)
+```
+
+##### 8.events(事件触发器)
+
+```js
+const events = require('events')
+
+const ee = new events.EventEmitter()
+
+ee.on('hello', (name) => {
+  console.log('你好！', name)
+})
+
+ee.emit('hello', '咸鱼')
+```
+
