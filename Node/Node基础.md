@@ -1,20 +1,37 @@
 #### Node基础
 
-##### 1.Jest测试
+##### 1.http
 
-进入项目，然后运行一下命令初始化`jest`配置
-
-```bash
-npx jest --init				
-```
-
-jest断言————toBe
+###### 设置状态码和响应头
 
 ```js
-test('helloworld测试', () => {
-  const helloworld = require('../index')
-  expect(helloworld).toBe('hello world')
-})
+response.writeHead(200, {
+    'Content-Type': 'text/plain'
+  })
+```
+
+###### 设置响应头
+
+```js
+response.setHeader('Content-Type', 'text/html')
+```
+
+###### 写入内容
+
+```js
+response.write()
+```
+
+###### 结束响应
+
+```js
+response.end()
+```
+
+###### 设置状态码
+
+```js
+response.statusCode = 200
 ```
 
 ##### 2.path模块提供了一些实用工具，用于处理文件和目录的路径
@@ -438,4 +455,3 @@ ee.on('hello', (name) => {
 
 ee.emit('hello', '咸鱼')
 ```
-
